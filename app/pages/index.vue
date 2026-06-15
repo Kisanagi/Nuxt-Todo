@@ -56,14 +56,14 @@
     <transition name="fade">
       <div
         v-if="sidebarOpen"
-        class="fixed inset-0 bg-black/30 z-20 lg:hidden"
+        class="fixed inset-0 bg-black/30 z-20 md:hidden"
         @click="sidebarOpen = false"
       />
     </transition>
 
     <!-- ===================== SIDEBAR ===================== -->
     <aside
-      class="fixed lg:relative inset-y-0 left-0 z-30 w-72 shrink-0 flex flex-col bg-white border-r border-stone-200 p-5 overflow-y-auto transition-transform duration-300 lg:translate-x-0 animate-slide-left"
+      class="fixed md:relative inset-y-0 left-0 z-30 w-72 shrink-0 flex flex-col bg-white border-r border-stone-200 p-5 overflow-y-auto transition-transform duration-300 md:translate-x-0 animate-slide-left"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <!-- Logo + Close (mobile) -->
@@ -81,7 +81,7 @@
             <p class="text-xs text-stone-400">Susun langkah otomatis</p>
           </div>
         </div>
-        <button @click="sidebarOpen = false" class="lg:hidden p-1.5 text-stone-400 hover:bg-stone-100 rounded-lg">
+        <button @click="sidebarOpen = false" class="md:hidden p-1.5 text-stone-400 hover:bg-stone-100 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
@@ -171,7 +171,7 @@
     <main class="flex-1 flex flex-col overflow-hidden min-w-0">
 
       <!-- Mobile Top Bar -->
-      <div class="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-stone-200 shrink-0">
+      <div class="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-stone-200 shrink-0">
         <button @click="sidebarOpen = true" class="p-2 text-stone-500 hover:bg-stone-100 rounded-xl transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -196,7 +196,7 @@
       <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
 
         <!-- Header (desktop only) -->
-        <div class="hidden lg:flex items-start justify-between mb-6 animate-fade-up">
+        <div class="hidden md:flex items-start justify-between mb-6 animate-fade-up">
           <div>
             <h2 class="text-2xl font-bold text-stone-800">{{ currentFilterLabel }}</h2>
             <p class="text-stone-400 text-sm mt-1">Tulis tugas, lalu pecah jadi langkah-langkah kecil otomatis.</p>
@@ -207,13 +207,13 @@
         </div>
 
         <!-- Mobile Header -->
-        <div class="lg:hidden mb-4">
+        <div class="md:hidden mb-4">
           <h2 class="text-xl font-bold text-stone-800">{{ currentFilterLabel }}</h2>
           <p class="text-stone-400 text-xs mt-0.5">{{ tasks.length }} tugas · {{ progressPercent }}% selesai</p>
         </div>
 
         <!-- Mobile Filter Pills -->
-        <div class="lg:hidden flex gap-2 mb-4 overflow-x-auto pb-1">
+        <div class="md:hidden flex gap-2 mb-4 overflow-x-auto pb-1">
           <button
             v-for="item in filterItems" :key="item.value"
             @click="filter = item.value"
