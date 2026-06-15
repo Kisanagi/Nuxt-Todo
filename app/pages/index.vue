@@ -63,7 +63,7 @@
 
     <!-- ===================== SIDEBAR ===================== -->
     <aside
-      class="fixed md:relative inset-y-0 left-0 z-30 w-72 shrink-0 flex flex-col bg-white border-r border-stone-200 p-5 overflow-y-auto transition-transform duration-300 md:translate-x-0 animate-slide-left"
+      class="fixed md:relative inset-y-0 left-0 z-30 w-72 shrink-0 flex flex-col bg-white border-r border-stone-200 p-5 overflow-y-auto transition-transform duration-350 md:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <!-- Logo + Close (mobile) -->
