@@ -1,7 +1,7 @@
 import { useSupabaseClient } from '#imports'
 
 export const todoService = {
-  async getAll() {
+  async getAll(userId) {
     const supabase = useSupabaseClient()
     const { data, error } = await supabase
       .from('todos')
@@ -9,6 +9,7 @@ export const todoService = {
         id, title, completed, due_date, priority, created_at,
         subtasks ( id, title, completed, duration_minutes, created_at )
       `)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
     if (error) throw error
     return data

@@ -16,7 +16,7 @@ export const useTodos = () => {
     if (!user.value) return
     isLoadingData.value = true
     try {
-      const data = await todoService.getAll()
+      const data = await todoService.getAll(user.value.id)
       tasks.value = data.map(todo => ({
         id: todo.id,
         text: todo.title,
