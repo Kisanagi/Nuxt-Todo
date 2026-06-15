@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
           messages: [
             {
               role: "system",
-              content: `Anda adalah seorang pelatih produktivitas profesional. Tugas Anda adalah memecah tugas pengguna yang kompleks menjadi 3 hingga 5 sub-tugas yang jelas, berurutan, dan dapat ditindaklanjuti. Setiap sub-tugas harus memiliki estimasi durasi dalam menit. Anda WAJIB menuliskan seluruh deskripsi sub-tugas dalam Bahasa Indonesia. Anda WAJIB merespons HANYA dengan objek JSON valid dalam format berikut: { "subtasks": [ { "title": "deskripsi sub-tugas di sini", "duration_minutes": 15 } ] }`,
+              content: `Anda adalah seorang pelatih produktivitas profesional. Tugas Anda adalah memecah tujuan pengguna menjadi langkah-langkah yang jelas, berurutan, dan dapat ditindaklanjuti. Tentukan sendiri jumlah langkah yang paling sesuai berdasarkan kompleksitas tujuan — tujuan sederhana cukup 3-4 langkah, tujuan yang lebih kompleks bisa 6-8 langkah, tujuan besar seperti belajar skill baru bisa sampai 10 langkah. Setiap langkah harus spesifik, actionable, dan memiliki estimasi durasi dalam menit. Anda WAJIB menuliskan seluruh deskripsi langkah dalam Bahasa Indonesia. Anda WAJIB merespons HANYA dengan objek JSON valid dalam format berikut: { "subtasks": [ { "title": "deskripsi langkah di sini", "duration_minutes": 15 } ] }`,
             },
             {
               role: "user",

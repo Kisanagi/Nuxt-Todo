@@ -147,23 +147,16 @@
             </svg>
           </button>
 
-          <button
-            v-if="!task.completed"
-            @click.stop="handleAiBreakdown"
-            :disabled="isAiLoading"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 border disabled:opacity-40"
-            :class="isAiLoading
-              ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
-              : 'bg-stone-50 hover:bg-emerald-50 text-stone-500 hover:text-emerald-700 border-stone-200 hover:border-emerald-200'"
+          <!-- AI loading indicator (shows while auto-breakdown runs) -->
+          <div
+            v-if="isAiLoading && !task.subtasks?.length"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200"
           >
-            <svg v-if="!isAiLoading" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            <svg v-else class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
-            {{ isAiLoading ? 'Memproses...' : 'Pecah AI' }}
-          </button>
+            AI...
+          </div>
           <button @click.stop="startEdit(task)" class="p-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -188,7 +181,7 @@
               <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
               <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
             </svg>
-            <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Sub-tugas AI</span>
+            <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Langkah AI</span>
           </div>
           <!-- Regenerate Button -->
           <button

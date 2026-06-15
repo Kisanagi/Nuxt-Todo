@@ -77,8 +77,8 @@
             </svg>
           </div>
           <div>
-            <h1 class="text-sm font-bold text-stone-800 leading-tight">Tugas Saya</h1>
-            <p class="text-xs text-stone-400">Susun langkah otomatis</p>
+            <h1 class="text-sm font-bold text-stone-800 leading-tight">Wujudkan</h1>
+            <p class="text-xs text-stone-400">Breakdown AI otomatis</p>
           </div>
         </div>
         <button @click="sidebarOpen = false" class="md:hidden p-1.5 text-stone-400 hover:bg-stone-100 rounded-lg">
@@ -128,7 +128,7 @@
           </svg>
         </div>
         <p class="text-center text-sm font-semibold text-stone-700">Progress kamu</p>
-        <p class="text-center text-xs text-stone-400 mt-0.5">{{ completedCount }} dari {{ tasks.length }} tugas selesai</p>
+        <p class="text-center text-xs text-stone-400 mt-0.5">{{ completedCount }} dari {{ tasks.length }} tujuan tercapai</p>
       </div>
 
       <!-- Daily Summary Button -->
@@ -185,7 +185,7 @@
               <path d="M9 12l2 2 4-4"/>
             </svg>
           </div>
-          <span class="text-sm font-bold text-stone-800">Tugas Saya</span>
+          <span class="text-sm font-bold text-stone-800">Wujudkan</span>
         </div>
         <div class="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white font-bold text-sm">
           {{ userEmailPrefix }}
@@ -199,17 +199,17 @@
         <div class="hidden md:flex items-start justify-between mb-6 animate-fade-up">
           <div>
             <h2 class="text-2xl font-bold text-stone-800">{{ currentFilterLabel }}</h2>
-            <p class="text-stone-400 text-sm mt-1">Tulis tugas, lalu pecah jadi langkah-langkah kecil otomatis.</p>
+            <p class="text-stone-400 text-sm mt-1">Tulis apa yang ingin kamu capai — AI akan menyusun langkahnya otomatis.</p>
           </div>
           <div class="text-xs text-stone-500 bg-white border border-stone-200 rounded-xl px-4 py-2 shrink-0">
-            {{ tasks.length }} tugas &nbsp;·&nbsp; {{ progressPercent }}% selesai
+            {{ tasks.length }} tujuan &nbsp;·&nbsp; {{ progressPercent }}% tercapai
           </div>
         </div>
 
         <!-- Mobile Header -->
         <div class="md:hidden mb-4">
           <h2 class="text-xl font-bold text-stone-800">{{ currentFilterLabel }}</h2>
-          <p class="text-stone-400 text-xs mt-0.5">{{ tasks.length }} tugas · {{ progressPercent }}% selesai</p>
+          <p class="text-stone-400 text-xs mt-0.5">{{ tasks.length }} tujuan · {{ progressPercent }}% tercapai</p>
         </div>
 
         <!-- Mobile Filter Pills -->
@@ -242,7 +242,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
           </svg>
-          <span class="text-xs font-semibold uppercase tracking-wider">Memuat tugas...</span>
+          <span class="text-xs font-semibold uppercase tracking-wider">Memuat tujuan...</span>
         </div>
 
         <!-- Empty State -->
@@ -254,8 +254,8 @@
               <path d="M9 12l2 2 4-4"/>
             </svg>
           </div>
-          <p class="text-base font-bold text-stone-700 mb-1">Belum ada tugas</p>
-          <p class="text-sm text-stone-400 mb-5">Coba salah satu contoh di bawah.</p>
+          <p class="text-base font-bold text-stone-700 mb-1">Belum ada tujuan</p>
+          <p class="text-sm text-stone-400 mb-5">Coba tulis salah satu tujuan di bawah.</p>
           <div class="flex flex-wrap gap-2 justify-center">
             <button
               v-for="ex in examples" :key="ex"
@@ -278,7 +278,7 @@
         <!-- Clear Completed -->
         <div v-if="hasCompleted && !isLoadingData" class="mt-6 flex justify-end">
           <button @click="handleClear" class="text-xs text-red-400 hover:text-red-600 hover:bg-red-50 font-semibold px-4 py-2 rounded-xl border border-transparent hover:border-red-100 transition duration-150">
-            Hapus semua yang selesai
+            Hapus semua yang tercapai
           </button>
         </div>
 
@@ -309,7 +309,7 @@ const handleToast = (message, type = 'success') => {
 const handleClear = async () => {
   try {
     await clearCompleted()
-    handleToast('Tugas selesai telah dihapus.', 'success')
+    handleToast('Tujuan yang tercapai telah dihapus.', 'success')
   } catch {
     handleToast('Gagal menghapus tugas selesai.', 'error')
   }
@@ -327,16 +327,16 @@ const filterItems = computed(() => [
     icon: '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'
   },
   {
-    value: 'active', label: 'Aktif', count: tasks.value.filter(t => !t.completed).length,
+    value: 'active', label: 'Dikejar', count: tasks.value.filter(t => !t.completed).length,
     icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
   },
   {
-    value: 'completed', label: 'Selesai', count: tasks.value.filter(t => t.completed).length,
+    value: 'completed', label: 'Tercapai', count: tasks.value.filter(t => t.completed).length,
     icon: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
   }
 ])
 
-const filterLabels = { all: 'Semua Tugas', active: 'Aktif', completed: 'Selesai' }
+const filterLabels = { all: 'Semua Tujuan', active: 'Sedang Dikejar', completed: 'Tercapai' }
 const currentFilterLabel = computed(() => filterLabels[filter.value] || 'Semua Tugas')
 
 // Daily Summary
@@ -360,7 +360,7 @@ const handleDailySummary = async () => {
   }
 }
 
-const examples = ['Rencana latihan lari maraton', 'Siapkan presentasi proyek akhir', 'Atur ulang anggaran bulanan', 'Belajar dasar React']
+const examples = ['Bisa berbicara bahasa Inggris', 'Lulus ujian sertifikasi AWS', 'Bangun kebiasaan olahraga rutin', 'Selesaikan proyek portofolio']
 const fillExample = (text) => { newTask.value = text }
 
 watch(user, (u) => {

@@ -7,12 +7,13 @@
           @keyup.enter="handleAddTask"
           type="text"
           class="flex-1 text-sm text-stone-700 placeholder-stone-400 bg-transparent focus:outline-none"
-          placeholder="Tambah tugas baru (misal: Rencana latihan maraton)..."
+          placeholder="Apa yang ingin kamu capai? (misal: Bisa berbicara bahasa Inggris)"
+          :disabled="isAdding"
         />
 
         <!-- Improve Title Button -->
         <button
-          v-if="newTask.trim().length > 3"
+          v-if="newTask.trim().length > 3 && !isAdding"
           @click="handleImproveTitle"
           :disabled="isImprovingTitle"
           title="Perbaiki judul dengan AI"
@@ -28,6 +29,7 @@
 
         <!-- Date picker toggle -->
         <button
+          v-if="!isAdding"
           @click="showDate = !showDate"
           title="Tambah tenggat waktu"
           class="p-1 rounded-lg transition duration-150 shrink-0"
@@ -40,11 +42,50 @@
       </div>
       <button
         @click="handleAddTask"
-        class="px-6 py-3 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-semibold rounded-2xl shadow-sm transition duration-150 text-sm shrink-0"
+        :disabled="isAdding || !newTask.trim()"
+        class="px-6 py-3 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-semibold rounded-2xl shadow-sm transition duration-150 text-sm shrink-0 disabled:opacity-60 disabled:cursor-not-allowed min-w-[88px] flex items-center justify-center"
       >
-        Tambah
+        <svg v-if="isAdding" class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <span v-else>Tambah</span>
       </button>
     </div>
+
+    <!-- AI Pipeline Progress -->
+    <transition name="slide-down">
+      <div v-if="isAdding" class="px-4 py-3 bg-white border border-emerald-200 rounded-2xl shadow-sm">
+        <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-2.5">Pipeline AI</p>
+        <div class="space-y-2">
+          <div v-for="(step, i) in pipelineSteps" :key="i" class="flex items-center gap-2.5">
+            <!-- Icon -->
+            <div class="w-5 h-5 shrink-0 flex items-center justify-center">
+              <!-- Done -->
+              <div v-if="currentStep > i" class="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <!-- Active -->
+              <svg v-else-if="currentStep === i" class="animate-spin text-emerald-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              <!-- Pending -->
+              <div v-else class="w-4 h-4 border-2 border-stone-200 rounded-full"></div>
+            </div>
+            <!-- Label -->
+            <span
+              class="text-xs font-medium transition-colors duration-200"
+              :class="{
+                'text-emerald-700 font-semibold': currentStep === i,
+                'text-stone-700': currentStep > i,
+                'text-stone-400': currentStep < i
+              }"
+            >{{ step }}</span>
+          </div>
+        </div>
+      </div>
+    </transition>
 
     <!-- AI Title Suggestion -->
     <transition name="slide-down">
@@ -87,13 +128,23 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const { newTask, newTaskDueDate, addTask } = useTodos()
-const { isImprovingTitle, requestImproveTitle } = useAI()
+const { newTask, newTaskDueDate, addTask, updateTaskTitle, updatePriority } = useTodos()
+const { saveSubtasks } = useSubtasks()
+const { isImprovingTitle, requestImproveTitle, requestBreakdown, requestPriority } = useAI()
 const emit = defineEmits(['error', 'success'])
 
 const showDate = ref(false)
 const titleSuggestion = ref(null)
+const isAdding = ref(false)
+const currentStep = ref(-1)
 const today = computed(() => new Date().toISOString().split('T')[0])
+
+const pipelineSteps = [
+  'Menyimpan tujuan',
+  'Memperbaiki judul',
+  'Menganalisis prioritas',
+  'Menyusun langkah-langkah AI'
+]
 
 const handleImproveTitle = async () => {
   if (!newTask.value.trim()) return
@@ -102,7 +153,7 @@ const handleImproveTitle = async () => {
     if (result.improved && result.improved !== newTask.value) {
       titleSuggestion.value = result
     } else {
-      emit('success', 'Judul sudah cukup jelas!')
+      emit('success', 'Judulnya sudah cukup jelas!')
     }
   } catch {
     emit('error', 'Gagal memperbaiki judul.')
@@ -115,14 +166,48 @@ const acceptSuggestion = () => {
 }
 
 const handleAddTask = async () => {
-  if (!newTask.value.trim()) return
+  if (!newTask.value.trim() || isAdding.value) return
+  const taskTitle = newTask.value.trim()
   titleSuggestion.value = null
+  isAdding.value = true
+  currentStep.value = 0
+
   try {
-    await addTask()
+    // Step 0: Simpan tujuan
+    const newTodo = await addTask()
     showDate.value = false
-    emit('success', 'Tugas baru berhasil ditambahkan!')
+
+    // Step 1: Perbaiki judul
+    currentStep.value = 1
+    try {
+      const titleResult = await requestImproveTitle(taskTitle)
+      if (titleResult.improved && titleResult.improved !== taskTitle) {
+        await updateTaskTitle(newTodo.id, titleResult.improved)
+        newTodo.text = titleResult.improved
+      }
+    } catch { /* lanjut meski gagal */ }
+
+    // Step 2: Analisis prioritas
+    currentStep.value = 2
+    try {
+      const priorityResult = await requestPriority(newTodo.id, newTodo.text)
+      await updatePriority(newTodo.id, priorityResult.priority)
+    } catch { /* lanjut meski gagal */ }
+
+    // Step 3: Breakdown langkah
+    currentStep.value = 3
+    try {
+      const subtasksList = await requestBreakdown(newTodo.id, newTodo.text)
+      await saveSubtasks(newTodo.id, subtasksList)
+    } catch { /* lanjut meski gagal */ }
+
+    currentStep.value = 4
+    emit('success', 'Tujuan siap lengkap dengan langkah AI!')
   } catch (err) {
-    emit('error', err.message || 'Gagal menambahkan tugas baru.')
+    emit('error', err.message || 'Gagal menambahkan tujuan.')
+  } finally {
+    isAdding.value = false
+    currentStep.value = -1
   }
 }
 </script>

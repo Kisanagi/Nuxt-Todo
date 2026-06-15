@@ -40,16 +40,18 @@ export const useTodos = () => {
     try {
       const userId = user.value.id || user.value.sub
       const data = await todoService.create(text, userId, newTaskDueDate.value || null)
-      tasks.value.unshift({
+      const newTodo = {
         id: data.id,
         text: data.title,
         completed: data.completed,
         dueDate: data.due_date || null,
         priority: null,
         subtasks: []
-      })
+      }
+      tasks.value.unshift(newTodo)
       newTask.value = ''
       newTaskDueDate.value = ''
+      return newTodo
     } catch (err) {
       console.error('Error adding todo:', err)
       throw err
@@ -106,6 +108,17 @@ export const useTodos = () => {
   const cancelEdit = () => {
     editingId.value = null
     editText.value = ''
+  }
+
+  const updateTaskTitle = async (id, title) => {
+    try {
+      await todoService.updateTitle(id, title)
+      const task = tasks.value.find(t => t.id === id)
+      if (task) task.text = title
+    } catch (err) {
+      console.error('Error updating task title:', err)
+      throw err
+    }
   }
 
   const updatePriority = async (id, priority) => {
@@ -165,6 +178,7 @@ export const useTodos = () => {
     startEdit,
     saveEdit,
     cancelEdit,
+    updateTaskTitle,
     updatePriority,
     updateDueDate,
     filteredTasks,

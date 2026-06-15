@@ -12,19 +12,19 @@
             <path d="M9 12l2 2 4-4"/>
           </svg>
         </div>
-        <span class="text-white font-bold text-sm">Tugas Saya</span>
+        <span class="text-white font-bold text-sm">Wujudkan</span>
       </div>
 
       <!-- Center Text -->
       <div>
         <h1 class="text-4xl font-bold text-white leading-tight mb-3">
-          Susun tugas,<br>capai tujuan.
+          Tulis tujuan,<br>AI susun jalannya.
         </h1>
-        <p class="text-emerald-200 text-sm">Pecah tugas kompleks dengan AI secara otomatis.</p>
+        <p class="text-emerald-200 text-sm">Dari keinginan jadi langkah nyata, otomatis.</p>
       </div>
 
       <!-- Bottom Quote -->
-      <p class="text-emerald-300 text-xs">&copy; 2025 Tugas Saya. Semua hak dilindungi.</p>
+      <p class="text-emerald-300 text-xs">&copy; 2025 Wujudkan. Semua hak dilindungi.</p>
     </div>
 
     <!-- Right Panel (Form) -->
@@ -40,7 +40,7 @@
               <path d="M9 12l2 2 4-4"/>
             </svg>
           </div>
-          <span class="font-bold text-stone-800">Tugas Saya</span>
+          <span class="font-bold text-stone-800">Wujudkan</span>
         </div>
 
         <!-- Heading -->
