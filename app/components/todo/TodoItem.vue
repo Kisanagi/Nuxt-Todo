@@ -230,9 +230,9 @@ const isPrioritizing = computed(() => !!loadingTasks.value[`priority_${props.tas
 
 // Priority display
 const priorityMap = {
-  high:   { label: '🔴 Tinggi', class: 'bg-red-50 text-red-600 border border-red-200', btn: 'text-red-500 bg-red-50' },
-  medium: { label: '🟡 Sedang', class: 'bg-amber-50 text-amber-600 border border-amber-200', btn: 'text-amber-500 bg-amber-50' },
-  low:    { label: '🔵 Rendah', class: 'bg-blue-50 text-blue-600 border border-blue-200', btn: 'text-blue-500 bg-blue-50' }
+  high:   { label: 'Tinggi', class: 'bg-red-50 text-red-600 border border-red-200', btn: 'text-red-500 bg-red-50' },
+  medium: { label: 'Sedang', class: 'bg-amber-50 text-amber-600 border border-amber-200', btn: 'text-amber-500 bg-amber-50' },
+  low:    { label: 'Rendah', class: 'bg-blue-50 text-blue-600 border border-blue-200', btn: 'text-blue-500 bg-blue-50' }
 }
 const priorityClass = computed(() => priorityMap[props.task.priority]?.class || '')
 const priorityLabel = computed(() => priorityMap[props.task.priority]?.label || '')
