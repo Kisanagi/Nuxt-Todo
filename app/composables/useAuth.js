@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 
 const sessionExpired = ref(false)
+const isAuthReady = ref(false)
 
 export const useAuth = () => {
   const supabase = useSupabaseClient()
@@ -13,10 +14,13 @@ export const useAuth = () => {
     return user.value.email.charAt(0).toUpperCase()
   })
 
-  // Deteksi session expired — hanya di client
+  // Tunggu INITIAL_SESSION sebelum izinkan redirect
   if (import.meta.client) {
     supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT' && !isLoading.value) {
+      if (event === 'INITIAL_SESSION') {
+        isAuthReady.value = true
+      }
+      if (event === 'SIGNED_OUT' && isAuthReady.value && !isLoading.value) {
         sessionExpired.value = true
       }
     })
@@ -74,6 +78,6 @@ export const useAuth = () => {
 
   return {
     user, isLoading, errorMsg, userEmailPrefix,
-    sessionExpired, login, signup, logout, checkAuthAndRedirect
+    sessionExpired, isAuthReady, login, signup, logout, checkAuthAndRedirect
   }
 }

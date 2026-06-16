@@ -290,7 +290,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
-const { user, userEmailPrefix, logout, checkAuthAndRedirect, sessionExpired } = useAuth()
+const { user, userEmailPrefix, logout, checkAuthAndRedirect, sessionExpired, isAuthReady } = useAuth()
 const { isSummarizing, requestDailySummary } = useAI()
 const { tasks, filter, newTask, fetchTodos, isLoadingData, filteredTasks, hasCompleted, clearCompleted } = useTodos()
 
@@ -363,7 +363,8 @@ const handleDailySummary = async () => {
 const examples = ['Bisa berbicara bahasa Inggris', 'Lulus ujian sertifikasi AWS', 'Bangun kebiasaan olahraga rutin', 'Selesaikan proyek portofolio']
 const fillExample = (text) => { newTask.value = text }
 
-watch(user, (u) => {
+watch([user, isAuthReady], ([u, ready]) => {
+  if (!ready) return // tunggu Supabase selesai restore session
   if (u) {
     fetchTodos()
   } else {
