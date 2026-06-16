@@ -288,9 +288,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
-const { user, userEmailPrefix, logout, checkAuthAndRedirect, sessionExpired, isAuthReady } = useAuth()
+const { user, userEmailPrefix, logout, sessionExpired } = useAuth()
+const supabase = useSupabaseClient()
 const { isSummarizing, requestDailySummary } = useAI()
 const { tasks, filter, newTask, fetchTodos, isLoadingData, filteredTasks, hasCompleted, clearCompleted } = useTodos()
 
@@ -363,19 +364,27 @@ const handleDailySummary = async () => {
 const examples = ['Bisa berbicara bahasa Inggris', 'Lulus ujian sertifikasi AWS', 'Bangun kebiasaan olahraga rutin', 'Selesaikan proyek portofolio']
 const fillExample = (text) => { newTask.value = text }
 
-watch([user, isAuthReady], ([u, ready]) => {
-  if (!ready) return // tunggu Supabase selesai restore session
-  if (u) {
-    fetchTodos()
+// Cek session saat pertama buka — getSession() baca langsung dari storage
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    await fetchTodos()
   } else {
+    navigateTo('/login')
+  }
+})
+
+// Deteksi logout saat app sedang buka
+watch(user, (u, prevU) => {
+  if (prevU && !u) {
     if (sessionExpired.value) {
       handleToast('Sesi Anda telah berakhir. Silakan masuk kembali.', 'error')
       setTimeout(() => navigateTo('/login'), 2000)
     } else {
-      checkAuthAndRedirect()
+      navigateTo('/login')
     }
   }
-}, { immediate: true })
+})
 </script>
 
 <style scoped>
