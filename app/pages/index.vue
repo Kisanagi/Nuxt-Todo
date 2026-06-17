@@ -368,7 +368,7 @@ const fillExample = (text) => { newTask.value = text }
 onMounted(async () => {
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
-    await fetchTodos()
+    await fetchTodos(session.user.id)
   } else {
     navigateTo('/login')
   }

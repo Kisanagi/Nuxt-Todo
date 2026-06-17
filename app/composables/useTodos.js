@@ -12,11 +12,12 @@ const isLoadingData = ref(false)
 export const useTodos = () => {
   const user = useSupabaseUser()
 
-  const fetchTodos = async () => {
-    if (!user.value) return
+  const fetchTodos = async (userId) => {
+    const uid = userId || user.value?.id
+    if (!uid) return
     isLoadingData.value = true
     try {
-      const data = await todoService.getAll(user.value.id)
+      const data = await todoService.getAll(uid)
       tasks.value = data.map(todo => ({
         id: todo.id,
         text: todo.title,
