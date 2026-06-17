@@ -378,8 +378,8 @@ onMounted(async () => {
 watch(user, (u, prevU) => {
   if (prevU && !u) {
     if (sessionExpired.value) {
-      handleToast('Sesi Anda telah berakhir. Silakan masuk kembali.', 'error')
-      setTimeout(() => navigateTo('/login'), 2000)
+      handleToast('Sesi berakhir karena aktivitas di perangkat/tab lain. Data kamu aman — silakan masuk kembali.', 'error')
+      setTimeout(() => navigateTo('/login'), 3000)
     } else {
       navigateTo('/login')
     }

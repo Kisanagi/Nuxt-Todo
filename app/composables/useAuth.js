@@ -1,6 +1,8 @@
 import { ref, computed } from 'vue'
 
 const sessionExpired = ref(false)
+// Track intentional logout so SIGNED_OUT doesn't get treated as token revocation
+let intentionalSignOut = false
 
 export const useAuth = () => {
   const supabase = useSupabaseClient()
@@ -15,8 +17,16 @@ export const useAuth = () => {
 
   if (import.meta.client) {
     supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT' && !isLoading.value) {
+      // TOKEN_REFRESHED means session is alive and well — clear any expired flag
+      if (event === 'TOKEN_REFRESHED') {
+        sessionExpired.value = false
+      }
+      // SIGNED_OUT from token revocation (not from user clicking logout)
+      if (event === 'SIGNED_OUT' && !intentionalSignOut) {
         sessionExpired.value = true
+      }
+      if (event === 'SIGNED_OUT') {
+        intentionalSignOut = false
       }
     })
   }
@@ -55,11 +65,13 @@ export const useAuth = () => {
   const logout = async () => {
     isLoading.value = true
     errorMsg.value = ''
+    intentionalSignOut = true
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
       navigateTo('/login')
     } catch (err) {
+      intentionalSignOut = false
       errorMsg.value = err.message || 'Gagal keluar.'
       console.error(err)
     } finally {
