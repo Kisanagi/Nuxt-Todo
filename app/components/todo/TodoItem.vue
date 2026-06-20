@@ -175,37 +175,56 @@
     <!-- Subtasks -->
     <transition name="subtasks-slide">
       <div v-if="task.subtasks && task.subtasks.length > 0" class="border-t border-stone-100 bg-stone-50/60">
-        <div class="px-4 pt-2.5 pb-1 flex items-center justify-between">
+        <!-- Header: klik untuk collapse/expand -->
+        <button
+          @click="subtasksExpanded = !subtasksExpanded"
+          class="w-full px-4 pt-2.5 pb-2 flex items-center justify-between hover:bg-stone-100/60 transition duration-150"
+        >
           <div class="flex items-center gap-1.5">
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-stone-400">
               <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
               <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
             </svg>
             <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Langkah AI</span>
+            <span class="text-[10px] text-stone-400 ml-1">({{ task.subtasks.length }})</span>
           </div>
-          <!-- Regenerate Button -->
-          <button
-            v-if="!task.completed"
-            @click="handleRegenerate"
-            :disabled="isAiLoading"
-            class="flex items-center gap-1 text-[11px] font-semibold text-stone-400 hover:text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded-lg transition duration-150 disabled:opacity-40"
-            title="Generate ulang sub-tugas"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin': isAiLoading }">
-              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          <div class="flex items-center gap-2">
+            <!-- Regenerate -->
+            <button
+              v-if="!task.completed"
+              @click.stop="handleRegenerate"
+              :disabled="isAiLoading"
+              class="flex items-center gap-1 text-[11px] font-semibold text-stone-400 hover:text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded-lg transition duration-150 disabled:opacity-40"
+              title="Generate ulang"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin': isAiLoading }">
+                <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+              </svg>
+              Generate ulang
+            </button>
+            <!-- Chevron -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+              class="text-stone-400 transition-transform duration-200"
+              :class="subtasksExpanded ? 'rotate-180' : ''"
+            >
+              <polyline points="6 9 12 15 18 9"/>
             </svg>
-            Generate ulang
-          </button>
-        </div>
-        <ul class="px-3 pb-3 space-y-0.5">
-          <SubtaskItem
-            v-for="sub in task.subtasks"
-            :key="sub.id"
-            :subtask="sub"
-            :todoId="task.id"
-            @error="(msg) => $emit('toast', { message: msg, type: 'error' })"
-          />
-        </ul>
+          </div>
+        </button>
+
+        <!-- Subtask List -->
+        <transition name="subtasks-slide">
+          <ul v-if="subtasksExpanded" class="px-3 pb-3 space-y-0.5">
+            <SubtaskItem
+              v-for="sub in task.subtasks"
+              :key="sub.id"
+              :subtask="sub"
+              :todoId="task.id"
+              @error="(msg) => $emit('toast', { message: msg, type: 'error' })"
+            />
+          </ul>
+        </transition>
       </div>
     </transition>
   </li>
@@ -224,6 +243,7 @@ const { loadingTasks, requestBreakdown, requestPriority } = useAI()
 const confirmingDelete = ref(false)
 const editingDueDate = ref(false)
 const tempDueDate = ref('')
+const subtasksExpanded = ref(false)
 
 const isAiLoading = computed(() => !!loadingTasks.value[props.task.id])
 const isPrioritizing = computed(() => !!loadingTasks.value[`priority_${props.task.id}`])
